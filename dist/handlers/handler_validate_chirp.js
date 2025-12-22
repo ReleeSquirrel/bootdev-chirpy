@@ -1,3 +1,4 @@
+import { BadRequestError } from "../errors.js";
 export async function handlerValidateChirp(req, res, next) {
     const body = req.body;
     // Validate the Chirp
@@ -12,7 +13,7 @@ export async function handlerValidateChirp(req, res, next) {
     }
     // Test if Chirp is Too Long
     if (body.body.length > 140) {
-        throw new Error(`Error: Chirp is too long`);
+        throw new BadRequestError(`Chirp is too long. Max length is 140`);
         res.header("Content-Type", "application/json");
         res.status(400).send(JSON.stringify({
             "error": "Chirp is too long",
