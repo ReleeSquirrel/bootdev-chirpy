@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { config } from "../config.js";
 
-export function handlerHitCounter(req: Request, res: Response, next: NextFunction) {
+export async function handlerHitCounter(req: Request, res: Response, next: NextFunction) {
     res.set('Content-Type', 'text/html');
     res.send(Buffer.from(`<html>
   <body>

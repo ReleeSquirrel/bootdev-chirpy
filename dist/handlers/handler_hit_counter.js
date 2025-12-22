@@ -1,5 +1,5 @@
 import { config } from "../config.js";
-export function handlerHitCounter(req, res, next) {
+export async function handlerHitCounter(req, res, next) {
     res.set('Content-Type', 'text/html');
     res.send(Buffer.from(`<html>
   <body>

@@ -1,4 +1,4 @@
-export function handlerReadiness(req, res, next) {
+export async function handlerReadiness(req, res, next) {
     res.set('Content-Type', 'text/plain');
     res.send(Buffer.from('OK'));
 }
