@@ -9,5 +9,4 @@ export function handlerHitCounter(req: Request, res: Response, next: NextFunctio
     <p>Chirpy has been visited ${config.fileserverHits} times!</p>
   </body>
 </html>`));
-    next();
 }

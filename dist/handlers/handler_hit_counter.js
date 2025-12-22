@@ -7,5 +7,4 @@ export function handlerHitCounter(req, res, next) {
     <p>Chirpy has been visited ${config.fileserverHits} times!</p>
   </body>
 </html>`));
-    next();
 }
