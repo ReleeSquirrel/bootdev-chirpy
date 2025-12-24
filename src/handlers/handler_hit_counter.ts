@@ -6,7 +6,7 @@ export async function handlerHitCounter(req: Request, res: Response, next: NextF
     res.send(Buffer.from(`<html>
   <body>
     <h1>Welcome, Chirpy Admin</h1>
-    <p>Chirpy has been visited ${config.fileserverHits} times!</p>
+    <p>Chirpy has been visited ${config.apiConfig.fileserverHits} times!</p>
   </body>
 </html>`));
 }

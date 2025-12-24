@@ -7,9 +7,10 @@ import { handlerReadiness } from "./handlers/handler_readiness.js";
 import { middlewareLogResponses } from "./middleware/middleware_log_responses.js";
 import { middlewareMetricsInc } from "./middleware/middleware_metrics_inc.js";
 import { handlerHitCounter } from "./handlers/handler_hit_counter.js";
-import { handlerResetHitCounter } from "./handlers/handler_reset_hit_counter.js";
+import { handlerReset } from "./handlers/handler_reset.js";
 import { handlerValidateChirp } from "./handlers/handler_validate_chirp.js";
 import { middlewareErrorHandler } from "./middleware/middleware_error_handler.js";
+import { handlerCreateUser } from "./handlers/handler_create_user.js";
 
 const migrationClient = postgres(config.dbConfig.dbURL, { max: 1 });
 await migrate(drizzle(migrationClient), config.dbConfig.migrationConfig);
@@ -17,8 +18,11 @@ await migrate(drizzle(migrationClient), config.dbConfig.migrationConfig);
 const app = express();
 
 app.use(middlewareLogResponses);
+
 app.use(express.json());
+
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
+
 app.get("/api/healthz", async (req, res, next) => {
   try {
     await handlerReadiness(req, res, next);
@@ -26,6 +30,7 @@ app.get("/api/healthz", async (req, res, next) => {
     next(err);
   }
 });
+
 app.post("/api/validate_chirp", async (req, res, next) => {
   try {
     await handlerValidateChirp(req, res, next);
@@ -33,6 +38,15 @@ app.post("/api/validate_chirp", async (req, res, next) => {
     next(err);
   }
 });
+
+app.post("/api/users", async (req, res, next) => {
+  try {
+    await handlerCreateUser(req, res, next);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.get("/admin/metrics", async (req, res, next) => {
   try {
     await handlerHitCounter(req, res, next);
@@ -40,9 +54,10 @@ app.get("/admin/metrics", async (req, res, next) => {
     next(err);
   }
 });
+
 app.post("/admin/reset", async (req, res, next) => {
   try {
-    await handlerResetHitCounter(req, res, next);
+    await handlerReset(req, res, next);
   } catch (err) {
     next(err);
   }

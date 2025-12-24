@@ -31,6 +31,10 @@ Quit out of psql with `quit`
 
 You'll need to set up a .env file in the project directory with the line `DB_URL="<connection_string>"` and replace `<connection_string>` with your database connection string, which has this format `protocol://username:password@host:port/database?sslmode=disable` if you are following along exactly, `postgres://postgres:postgres@localhost:5432/chirpy?sslmode=disable` will do.
 
+Add a line to the .env file with the text `PORT="8080"`, this is the port the webserver will listen on.
+
+Add a line to the .env file with the text `PLATFORM="dev"` to signify this project is running in a development environment.
+
 Within the project directory, run `npx drizzle-kit migrate` to finish setting up the database automatically
 
 Within the project directory, run `npm run dev` to start the server.

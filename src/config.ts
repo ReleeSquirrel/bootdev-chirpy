@@ -7,6 +7,7 @@ type DBConfig = {
 
 type APIConfig = {
   fileserverHits: number;
+  platform: string;
   port: number;
 };
 
@@ -38,6 +39,7 @@ const dbConfig: DBConfig = {
 
 const apiConfig: APIConfig = {
   fileserverHits: 0,
+  platform: envOrThrow("PLATFORM"),
   port: Number(envOrThrow("PORT")),
 }
 
