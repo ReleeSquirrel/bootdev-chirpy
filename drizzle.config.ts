@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import { config } from "./src/config.js";
+import { config } from "./src/config.ts";
 
 
 export default defineConfig({
@@ -7,6 +7,6 @@ export default defineConfig({
   out: "src/lib/db",
   dialect: "postgresql",
   dbCredentials: {
-    url: config.dbURL,
+    url: config.dbConfig.dbURL,
   },
 });
