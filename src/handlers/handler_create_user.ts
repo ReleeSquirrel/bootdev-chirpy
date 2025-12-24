@@ -7,14 +7,6 @@ export async function handlerCreateUser(req: Request, res: Response, next: NextF
         "email": string;
     }
 
-    type Output = {
-        "id": string,
-        "createdAt": string,
-        "updatedAt": string,
-        "email": string
-    }
-
-
     const input: Input = req.body;
 
     // Validate the Input
@@ -30,17 +22,12 @@ export async function handlerCreateUser(req: Request, res: Response, next: NextF
     }
 
     // Create the new user in the database
-    const newUser: NewUser = {
+    const createdUser: NewUser = await createUser({
         email: input.email,
-    }
-    const createdUser: NewUser = await createUser(newUser);
+    } satisfies NewUser);
 
     // Return the new user's data
     res.header("Content-Type", "application/json");
-    res.status(201).send(JSON.stringify({
-        "id": String(createdUser.id),
-        "createdAt": String(createdUser.createdAt),
-        "updatedAt": String(createdUser.updatedAt),
-        "email": createdUser.email
-    } satisfies Output));
+    res.status(201).send(JSON.stringify(createdUser));
+    return;
 }
