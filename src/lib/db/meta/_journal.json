@@ -15,6 +15,13 @@
       "when": 1766551532727,
       "tag": "0001_whole_brother_voodoo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1766629694847,
+      "tag": "0002_careful_shocker",
+      "breakpoints": true
     }
   ]
 }

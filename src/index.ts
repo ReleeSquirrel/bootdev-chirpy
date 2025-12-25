@@ -13,6 +13,7 @@ import { handlerCreateUser } from "./handlers/handler_create_user.js";
 import { handlerCreateChirp } from "./handlers/handler_create_chirp.js";
 import { handlerGetAllChirps } from "./handlers/handler_get_all_chirps.js";
 import { handlerGetChirp } from "./handlers/handler_get_chirp.js";
+import { handlerUserLogin } from "./handlers/handler_user_login.js";
 
 const migrationClient = postgres(config.dbConfig.dbURL, { max: 1 });
 await migrate(drizzle(migrationClient), config.dbConfig.migrationConfig);
@@ -60,6 +61,14 @@ app.get("/api/chirps/:chirpID", async (req, res, next) => {
 app.post("/api/users", async (req, res, next) => {
   try {
     await handlerCreateUser(req, res, next);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/api/login", async (req, res, next) => {
+  try {
+    await handlerUserLogin(req, res, next);
   } catch (err) {
     next(err);
   }

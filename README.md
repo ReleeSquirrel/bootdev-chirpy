@@ -11,7 +11,7 @@ Install nvm - https://github.com/nvm-sh/nvm
 
 Within the project directory, run `nvm use` and if it tells you to use a command to install the right version of node, go ahead and do that.
 
-Within the project directory, run `npm install -D typescript @types/node;npm i express;npm i -D @types/express;npm i drizzle-orm postgres;npm i -D drizzle-kit;` to install required node modules.
+Within the project directory, run `npm install -D typescript @types/node;npm i express;npm i -D @types/express;npm i drizzle-orm postgres;npm i -D drizzle-kit;npm i argon2;` to install required node modules.
 
 Install Postgres version 16+ - https://www.postgresql.org/
 
