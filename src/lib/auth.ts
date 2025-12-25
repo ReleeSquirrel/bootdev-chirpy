@@ -1,4 +1,7 @@
 import * as argon2 from "argon2";
+import * as jwt from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
+import { BadRequestError } from "../errors";
 
 /**
  * Creates a Hash from a given password using argon2
@@ -25,9 +28,38 @@ export async function checkPasswordHash(password: string, hash: string): Promise
     try {
         if (await argon2.verify(hash, password)) return true;
         else return false;
-    } catch (err) {        
+    } catch (err) {
         if (err instanceof Error) console.log(`Notice: Password hash comparison failed with error ${err.message}`);
         else console.log(`Notice: Password hash comparison failed with error ${err}`);
         return false;
+    }
+}
+
+function isJwtPayload(value: unknown): value is JwtPayload {
+    return typeof value === "object" && value !== null;
+}
+
+export async function makeJWT(userID: string, expiresIn: number, secret: string): Promise<string> {
+    type Payload = Pick<jwt.JwtPayload, "iss" | "sub" | "iat" | "exp">;
+    const iat = Math.floor(Date.now() / 1000);
+    const resultJWT = await jwt.sign({
+        iss: "chirpy",
+        sub: userID,
+        iat: iat,
+        exp: iat + expiresIn,
+    } satisfies Payload, secret);
+    return resultJWT;
+}
+
+export async function validateJWT(tokenString: string, secret: string): Promise<string> {
+    try {
+        const verifiedJWT = jwt.verify(tokenString, secret);
+        if (isJwtPayload(verifiedJWT) && typeof verifiedJWT.sub === "string") {
+            return verifiedJWT.sub;
+        } else if (typeof verifiedJWT === "string") {
+            return verifiedJWT;
+        } else throw new BadRequestError('Invalid JWT.');
+    } catch (err) {
+        throw new BadRequestError('Invalid JWT.');
     }
 }
