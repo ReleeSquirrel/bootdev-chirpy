@@ -9,6 +9,7 @@ type APIConfig = {
   fileserverHits: number;
   platform: string;
   port: number;
+  jwtSecret: string;
 };
 
 type Config = {
@@ -41,6 +42,7 @@ const apiConfig: APIConfig = {
   fileserverHits: 0,
   platform: envOrThrow("PLATFORM"),
   port: Number(envOrThrow("PORT")),
+  jwtSecret: envOrThrow("SECRET"),
 }
 
 export const config: Config = {

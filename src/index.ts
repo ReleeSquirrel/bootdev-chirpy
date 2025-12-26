@@ -3,17 +3,17 @@ import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { config } from "./config.js";
-import { handlerReadiness } from "./handlers/handler_readiness.js";
+import { handlerReadiness } from "./handlers/handler_api_healthz.js";
 import { middlewareLogResponses } from "./middleware/middleware_log_responses.js";
 import { middlewareMetricsInc } from "./middleware/middleware_metrics_inc.js";
-import { handlerHitCounter } from "./handlers/handler_hit_counter.js";
-import { handlerReset } from "./handlers/handler_reset.js";
+import { handlerHitCounter } from "./handlers/handler_admin_metrics.js";
+import { handlerReset } from "./handlers/handler_admin_reset.js";
 import { middlewareErrorHandler } from "./middleware/middleware_error_handler.js";
-import { handlerCreateUser } from "./handlers/handler_create_user.js";
-import { handlerCreateChirp } from "./handlers/handler_create_chirp.js";
-import { handlerGetAllChirps } from "./handlers/handler_get_all_chirps.js";
-import { handlerGetChirp } from "./handlers/handler_get_chirp.js";
-import { handlerUserLogin } from "./handlers/handler_user_login.js";
+import { handlerCreateUser } from "./handlers/handler_api_users.js";
+import { handlerCreateChirp } from "./handlers/handler_api_chirps.js";
+import { handlerGetAllChirps } from "./handlers/handler_api_chirps.js";
+import { handlerGetChirp } from "./handlers/handler_api_chirps.js";
+import { handlerLogin } from "./handlers/handler_api_login.js";
 
 const migrationClient = postgres(config.dbConfig.dbURL, { max: 1 });
 await migrate(drizzle(migrationClient), config.dbConfig.migrationConfig);
@@ -68,7 +68,7 @@ app.post("/api/users", async (req, res, next) => {
 
 app.post("/api/login", async (req, res, next) => {
   try {
-    await handlerUserLogin(req, res, next);
+    await handlerLogin(req, res, next);
   } catch (err) {
     next(err);
   }

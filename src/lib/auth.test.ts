@@ -27,9 +27,9 @@ describe("JWT Creation and Validation", () => {
     let jwt3: string;
 
     beforeAll(async () => {
-        jwt1 = await makeJWT(testUserID, 86400, testSecret);
-        jwt2 = await makeJWT(testUserID, 0, testSecret);
-        jwt3 = await makeJWT(testUserID, 86400, "wrong secret!");
+        jwt1 = makeJWT(testUserID, 86400, testSecret);
+        jwt2 = makeJWT(testUserID, 0, testSecret);
+        jwt3 = makeJWT(testUserID, 86400, "wrong secret!");
     })
 
     it("should return value of testUserID", async () => {

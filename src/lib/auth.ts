@@ -1,7 +1,8 @@
 import * as argon2 from "argon2";
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
-import { BadRequestError } from "../errors";
+import { Request } from "express";
+import { BadRequestError } from "../errors.js";
 
 /**
  * Creates a Hash from a given password using argon2
@@ -39,16 +40,24 @@ function isJwtPayload(value: unknown): value is JwtPayload {
     return typeof value === "object" && value !== null;
 }
 
-export async function makeJWT(userID: string, expiresIn: number, secret: string): Promise<string> {
+export function makeJWT(userID: string, expiresIn: number, secret: string): string {
     type Payload = Pick<jwt.JwtPayload, "iss" | "sub" | "iat" | "exp">;
     const iat = Math.floor(Date.now() / 1000);
-    const resultJWT = await jwt.sign({
-        iss: "chirpy",
-        sub: userID,
-        iat: iat,
-        exp: iat + expiresIn,
-    } satisfies Payload, secret);
-    return resultJWT;
+
+    try {
+        const resultJWT = jwt.sign({
+            iss: "chirpy",
+            sub: userID,
+            iat: iat,
+            exp: iat + expiresIn,
+        } satisfies Payload, secret);
+        return resultJWT;
+    } catch (err) {
+        if (err instanceof Error) console.log(`Error: ${err.message}`);
+        else console.log(`Error: ${err}`);
+        if (err instanceof Error) throw err;
+        else throw new Error(`Error: ${err}`);
+    }
 }
 
 export async function validateJWT(tokenString: string, secret: string): Promise<string> {
@@ -62,4 +71,14 @@ export async function validateJWT(tokenString: string, secret: string): Promise<
     } catch (err) {
         throw new BadRequestError('Invalid JWT.');
     }
+}
+
+export function getBearerToken(req: Request): string {
+    const token = req.get("Authorization");
+
+    if (typeof token !== "string" || !token.startsWith("Bearer ")) {
+        throw new BadRequestError("Missing or Malformed Authorization Header");
+    }
+
+    return token.replace("Bearer ", "");
 }

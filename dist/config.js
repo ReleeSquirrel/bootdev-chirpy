@@ -18,6 +18,7 @@ const apiConfig = {
     fileserverHits: 0,
     platform: envOrThrow("PLATFORM"),
     port: Number(envOrThrow("PORT")),
+    jwtSecret: envOrThrow("SECRET"),
 };
 export const config = {
     dbConfig: dbConfig,

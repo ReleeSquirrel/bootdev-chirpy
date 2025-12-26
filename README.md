@@ -29,11 +29,16 @@ Test that it's working with this SQL statement `SELECT version();`
 
 Quit out of psql with `quit`
 
-You'll need to set up a .env file in the project directory with the line `DB_URL="<connection_string>"` and replace `<connection_string>` with your database connection string, which has this format `protocol://username:password@host:port/database?sslmode=disable` if you are following along exactly, `postgres://postgres:postgres@localhost:5432/chirpy?sslmode=disable` will do.
+You'll need to set up an .env file in the project directory, like the following:
 
-Add a line to the .env file with the text `PORT="8080"`, this is the port the webserver will listen on.
-
-Add a line to the .env file with the text `PLATFORM="dev"` to signify this project is running in a development environment.
+```
+DB_URL=""
+PORT="8080"
+PLATFORM="dev"
+SECRET=""
+```
+Set the value of DB_URL to your connection string, which has this format `protocol://username:password@host:port/database?sslmode=disable` and if you are following along exactly, `postgres://postgres:postgres@localhost:5432/chirpy?sslmode=disable` will do.
+Set the value of SECRET to a unique string for generating JWTs (JSON Web Tokens). If you're on the command line, this command will give you one `openssl rand -base64 64`
 
 Within the project directory, run `npx drizzle-kit migrate` to finish setting up the database automatically
 
