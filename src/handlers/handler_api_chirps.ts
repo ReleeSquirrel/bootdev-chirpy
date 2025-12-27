@@ -35,9 +35,11 @@ export async function handlerCreateChirp(req: Request, res: Response, next: Next
 
     // Create the Chirp on the database
     const newChirp = await createChirp({
-        "body": input.body,
+        "body": censored_body,
         "userId": userID,
     } satisfies NewChirp);
+
+    if (newChirp === undefined) throw new BadRequestError(`New chirp not created.`);
 
     // Return
     res.header("Content-Type", "application/json");

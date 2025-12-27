@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { NewUser } from "../lib/db/schema.js";
 import { createUser } from "../lib/db/queries/users.js";
 import { hashPassword } from "../lib/auth.js";
+import { BadRequestError } from "../errors.js";
 
 export async function handlerCreateUser(req: Request, res: Response, next: NextFunction) {
     type Input = {
@@ -31,6 +32,8 @@ export async function handlerCreateUser(req: Request, res: Response, next: NextF
         email: input.email,
         hashedPassword: await hashPassword(input.password),
     } satisfies NewUser);
+
+    if(createUser === undefined) throw new BadRequestError(`New user not created.`);
 
     // Return the new user's data
     res.header("Content-Type", "application/json");

@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from "express";
-import { NewUser } from "../lib/db/schema.js";
+import { NewUser, NewRefreshToken } from "../lib/db/schema.js";
 import { getUserByEmail } from "../lib/db/queries/users.js";
-import { checkPasswordHash, makeJWT } from "../lib/auth.js";
+import { checkPasswordHash, makeJWT, makeRefreshToken } from "../lib/auth.js";
 import { UnauthorizedError } from "../errors.js";
 import { config } from "../config.js";
+import { createRefreshToken } from "../lib/db/queries/refresh_tokens.js";
 
 export async function handlerLogin(req: Request, res: Response, next: NextFunction) {
     type Input = {
         "email": string;
         "password": string;
-        "expiresInSeconds"?: number;
     }
 
     type Output = {
@@ -17,7 +17,8 @@ export async function handlerLogin(req: Request, res: Response, next: NextFuncti
         "createdAt": Date | undefined,
         "updatedAt": Date | undefined,
         "email": string,
-        "token": string
+        "token": string,
+        "refreshToken": string
     };
 
     const input: Input = req.body;
@@ -35,8 +36,6 @@ export async function handlerLogin(req: Request, res: Response, next: NextFuncti
         return;
     }
 
-    console.log(`input has been verified, and email is ${input.email}`);
-
     // Get the record for that user, including their hashed password
     const checkUser: NewUser = await getUserByEmail(input.email);
 
@@ -49,10 +48,20 @@ export async function handlerLogin(req: Request, res: Response, next: NextFuncti
     }
 
     // Check password
-    if (!await checkPasswordHash(input.password, checkUser.hashedPassword)) throw new UnauthorizedError(`Incorrect email or password.`);
+    if (!await checkPasswordHash(input.password, checkUser.hashedPassword)) 
+        throw new UnauthorizedError(`Incorrect email or password.`);
 
-    // Create JWT
-    const newJWT = makeJWT(checkUser.id, input.expiresInSeconds !== undefined && input.expiresInSeconds < 3600 ? input.expiresInSeconds : 3600, config.apiConfig.jwtSecret);
+    // !! User is Validated after this point !!
+
+    // Create JWT Access Token
+    const newJWT = makeJWT(checkUser.id, 3600, config.apiConfig.jwtSecret);
+
+    // Create Refresh Token
+    const newRefreshToken = await createRefreshToken({
+        userId: checkUser.id,
+        token: makeRefreshToken(),
+        expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
+    } satisfies NewRefreshToken);
 
     // Return the user's data
     res.header("Content-Type", "application/json");
@@ -62,6 +71,7 @@ export async function handlerLogin(req: Request, res: Response, next: NextFuncti
         "updatedAt": checkUser.updatedAt,
         "email": checkUser.email,
         "token": newJWT,
+        "refreshToken": newRefreshToken.token
     } satisfies Output));
     return;
 };

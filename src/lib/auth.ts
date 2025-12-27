@@ -1,8 +1,9 @@
+import { randomBytes } from "node:crypto";
 import * as argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
 import { Request } from "express";
-import { BadRequestError } from "../errors.js";
+import { BadRequestError, UnauthorizedError } from "../errors.js";
 
 /**
  * Creates a Hash from a given password using argon2
@@ -67,9 +68,9 @@ export async function validateJWT(tokenString: string, secret: string): Promise<
             return verifiedJWT.sub;
         } else if (typeof verifiedJWT === "string") {
             return verifiedJWT;
-        } else throw new BadRequestError('Invalid JWT.');
+        } else throw new UnauthorizedError('Invalid JWT.');
     } catch (err) {
-        throw new BadRequestError('Invalid JWT.');
+        throw new UnauthorizedError('Invalid JWT.');
     }
 }
 
@@ -77,8 +78,12 @@ export function getBearerToken(req: Request): string {
     const token = req.get("Authorization");
 
     if (typeof token !== "string" || !token.startsWith("Bearer ")) {
-        throw new BadRequestError("Missing or Malformed Authorization Header");
+        throw new UnauthorizedError("Missing or Malformed Authorization Header");
     }
 
     return token.replace("Bearer ", "");
+}
+
+export function makeRefreshToken(): string {
+    return randomBytes(32).toString('hex');
 }
