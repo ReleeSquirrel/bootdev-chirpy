@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { config } from "../config.js";
 import { BadRequestError, ForbiddenError, NotFoundError } from "../errors.js";
 import { getBearerToken, validateJWT } from "../lib/auth.js";
-import { createChirp, deleteChirpById, getAllChirps, getChirpById } from "../lib/db/queries/chirps.js";
+import { createChirp, deleteChirpById, getAllChirps, getAllChirpsByUserId, getChirpById } from "../lib/db/queries/chirps.js";
 import { NewChirp } from "../lib/db/schema.js";
 
 export async function handlerCreateChirp(req: Request, res: Response, next: NextFunction) {
@@ -48,18 +48,29 @@ export async function handlerCreateChirp(req: Request, res: Response, next: Next
 }
 
 export async function handlerGetChirp(req: Request, res: Response, next: NextFunction) {
+    // Get the chirp
     const chirp: NewChirp = await getChirpById(req.params.chirpID);
 
+    // Return the chirp
     res.header("Content-Type", "application/json");
     res.status(200).send(JSON.stringify(chirp));
     return;
 }
 
 export async function handlerGetAllChirps(req: Request, res: Response, next: NextFunction) {
-    const allChirps: NewChirp[] = await getAllChirps();
+     // Check authorId query parameter
+    let chirps: NewChirp[];
+    if (typeof req.query.authorId === "string") {
+        // Get only those chirps with the matching authorId
+        chirps = await getAllChirpsByUserId(req.query.authorId);
+    } else {
+        // Get all chirps
+        chirps = await getAllChirps();
+    }  
 
+    // Return the Chirps
     res.header("Content-Type", "application/json");
-    res.status(200).send(JSON.stringify(allChirps));
+    res.status(200).send(JSON.stringify(chirps));
     return;
 }
 
