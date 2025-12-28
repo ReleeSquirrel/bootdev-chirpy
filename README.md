@@ -45,3 +45,55 @@ POLKA_KEY is a fake API key for testing.
 Within the project directory, run `npx drizzle-kit migrate` to finish setting up the database automatically
 
 Within the project directory, run `npm run dev` to start the server.
+
+# Chirpy API
+
+## GET /api/healtz
+
+Takes no body, returns plain text OK
+
+## POST /api/chirps
+
+
+
+## GET /api/chirps
+
+
+
+## GET /api/chirps/<chirpId>
+
+
+
+## DELETE /api/chirps/<chirpId>
+
+
+
+## POST /api/users
+
+
+
+## PUT /api/users
+
+
+
+## POST /api/login
+
+
+
+## POST /api/refresh
+
+
+
+## POST /api/revoke
+
+
+
+## POST /api/polka/webhooks
+
+
+
+## POST /admin/metrics
+
+
+
+## POST /admin/reset

@@ -58,15 +58,39 @@ export async function handlerGetChirp(req: Request, res: Response, next: NextFun
 }
 
 export async function handlerGetAllChirps(req: Request, res: Response, next: NextFunction) {
-     // Check authorId query parameter
-    let chirps: NewChirp[];
+    // Check sort query parameter
+    const sort: string = typeof req.query.sort === "string" ? req.query.sort : "asc";
+
+    // Check authorId query parameter
+    let rawChirps: NewChirp[];
     if (typeof req.query.authorId === "string") {
         // Get only those chirps with the matching authorId
-        chirps = await getAllChirpsByUserId(req.query.authorId);
+        rawChirps = await getAllChirpsByUserId(req.query.authorId);
     } else {
         // Get all chirps
-        chirps = await getAllChirps();
-    }  
+        rawChirps = await getAllChirps();
+    }
+
+    // Validate all the chirps
+    const chirps = rawChirps.filter(
+        (r): r is NewChirp & {
+            body: string;
+            userId: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+        } =>
+            typeof r.body === "string" &&
+            typeof r.userId === "string" &&
+            typeof r.id === "string" &&
+            r.createdAt instanceof Date &&
+            r.updatedAt instanceof Date
+    );
+
+
+    // Sort the Chirps by created_at
+    if (sort === "asc") chirps.sort((a, b) => a.createdAt?.getTime() - b.createdAt?.getTime());
+    if (sort === "desc") chirps.sort((a, b) => b.createdAt?.getTime() - a.createdAt?.getTime());
 
     // Return the Chirps
     res.header("Content-Type", "application/json");
