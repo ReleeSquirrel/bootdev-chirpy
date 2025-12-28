@@ -19,6 +19,7 @@ const apiConfig = {
     platform: envOrThrow("PLATFORM"),
     port: Number(envOrThrow("PORT")),
     jwtSecret: envOrThrow("SECRET"),
+    polkaAPIKey: envOrThrow("POLKA_KEY"),
 };
 export const config = {
     dbConfig: dbConfig,

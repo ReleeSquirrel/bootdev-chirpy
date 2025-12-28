@@ -10,6 +10,7 @@ type APIConfig = {
   platform: string;
   port: number;
   jwtSecret: string;
+  polkaAPIKey: string;
 };
 
 type Config = {
@@ -43,6 +44,7 @@ const apiConfig: APIConfig = {
   platform: envOrThrow("PLATFORM"),
   port: Number(envOrThrow("PORT")),
   jwtSecret: envOrThrow("SECRET"),
+  polkaAPIKey: envOrThrow("POLKA_KEY"),
 }
 
 export const config: Config = {

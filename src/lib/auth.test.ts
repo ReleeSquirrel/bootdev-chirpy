@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import { checkPasswordHash, hashPassword, makeJWT, validateJWT } from "./auth.js";
 import { BadRequestError } from "../errors";
+import { config } from "../config.js";
 
 describe("Password Hashing", () => {
   const password1 = "correctPassword123!";

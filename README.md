@@ -36,9 +36,11 @@ DB_URL=""
 PORT="8080"
 PLATFORM="dev"
 SECRET=""
+POLKA_KEY="f271c81ff7084ee5b99a5091b42d486e"
 ```
 Set the value of DB_URL to your connection string, which has this format `protocol://username:password@host:port/database?sslmode=disable` and if you are following along exactly, `postgres://postgres:postgres@localhost:5432/chirpy?sslmode=disable` will do.
 Set the value of SECRET to a unique string for generating JWTs (JSON Web Tokens). If you're on the command line, this command will give you one `openssl rand -base64 64`
+POLKA_KEY is a fake API key for testing.
 
 Within the project directory, run `npx drizzle-kit migrate` to finish setting up the database automatically
 

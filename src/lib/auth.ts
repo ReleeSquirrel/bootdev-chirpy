@@ -3,7 +3,7 @@ import * as argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
 import { Request } from "express";
-import { BadRequestError, UnauthorizedError } from "../errors.js";
+import { UnauthorizedError } from "../errors.js";
 
 /**
  * Creates a Hash from a given password using argon2
@@ -86,4 +86,14 @@ export function getBearerToken(req: Request): string {
 
 export function makeRefreshToken(): string {
     return randomBytes(32).toString('hex');
+}
+
+export function getAPIKey(req: Request) {
+    const token = req.get("Authorization");
+
+    if (typeof token !== "string" || !token.startsWith("ApiKey ")) {
+        throw new UnauthorizedError("Missing or Malformed Authorization Header");
+    }
+
+    return token.replace("ApiKey ", "");
 }
