@@ -30,6 +30,15 @@ export async function updatePasswordAndEmailByUserId(userId: string, password: s
     .update(users)
     .set({email: email, hashedPassword: password})
     .where(eq(users.id, userId))
-    .returning({email: users.email, id: users.id, createdAt: users.createdAt, updatedAt: users.updatedAt});
+    .returning({email: users.email, id: users.id, createdAt: users.createdAt, updatedAt: users.updatedAt, isChirpyRed: users.isChirpyRed});
+  return result;
+}
+
+export async function updateUpgradeUserToChirpyRedByUserId(userId: string) {
+  const [result] = await db
+    .update(users)
+    .set({isChirpyRed: true})
+    .where(eq(users.id, userId))
+    .returning();
   return result;
 }

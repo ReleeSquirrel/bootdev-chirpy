@@ -17,6 +17,7 @@ export async function handlerLogin(req: Request, res: Response, next: NextFuncti
         "createdAt": Date | undefined,
         "updatedAt": Date | undefined,
         "email": string,
+        "isChirpyRed": boolean,
         "token": string,
         "refreshToken": string
     };
@@ -43,6 +44,7 @@ export async function handlerLogin(req: Request, res: Response, next: NextFuncti
     if (typeof checkUser !== "object" ||
         typeof checkUser.email !== "string" ||
         typeof checkUser.id !== "string" ||
+        typeof checkUser.isChirpyRed !== "boolean" ||
         typeof checkUser.hashedPassword !== "string") {
         throw new UnauthorizedError(`Incorrect email or password.`);
     }
@@ -70,6 +72,7 @@ export async function handlerLogin(req: Request, res: Response, next: NextFuncti
         "createdAt": checkUser.createdAt,
         "updatedAt": checkUser.updatedAt,
         "email": checkUser.email,
+        "isChirpyRed": checkUser.isChirpyRed,
         "token": newJWT,
         "refreshToken": newRefreshToken.token
     } satisfies Output));

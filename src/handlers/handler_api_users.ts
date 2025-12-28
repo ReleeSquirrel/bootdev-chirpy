@@ -43,7 +43,8 @@ export async function handlerCreateUser(req: Request, res: Response, next: NextF
         "id": createdUser.id,
         "createdAt": createdUser.createdAt,
         "updatedAt": createdUser.updatedAt,
-        "email": createdUser.email
+        "email": createdUser.email,
+        "isChirpyRed": createdUser.isChirpyRed
     } satisfies Output));
     return;
 }
@@ -59,6 +60,7 @@ export async function handlerUpdateUserPasswordAndEmail(req: Request, res: Respo
         "id": string;
         "created_at": Date;
         "updated_at": Date;
+        "isChirpyRed": boolean;
     }
 
     const userID = await validateJWT(getBearerToken(req), config.apiConfig.jwtSecret);
@@ -86,6 +88,7 @@ export async function handlerUpdateUserPasswordAndEmail(req: Request, res: Respo
         "id": updatedUser.id,
         "created_at": updatedUser.createdAt,
         "updated_at": updatedUser.updatedAt,
-        "email": updatedUser.email
+        "email": updatedUser.email,
+        "isChirpyRed": updatedUser.isChirpyRed
     } satisfies Output));
 }
