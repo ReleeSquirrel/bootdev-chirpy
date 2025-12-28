@@ -9,8 +9,8 @@ import { middlewareMetricsInc } from "./middleware/middleware_metrics_inc.js";
 import { handlerHitCounter } from "./handlers/handler_admin_metrics.js";
 import { handlerReset } from "./handlers/handler_admin_reset.js";
 import { middlewareErrorHandler } from "./middleware/middleware_error_handler.js";
-import { handlerCreateUser } from "./handlers/handler_api_users.js";
-import { handlerCreateChirp } from "./handlers/handler_api_chirps.js";
+import { handlerCreateUser, handlerUpdateUserPasswordAndEmail } from "./handlers/handler_api_users.js";
+import { handlerCreateChirp, handlerDeleteChirp } from "./handlers/handler_api_chirps.js";
 import { handlerGetAllChirps } from "./handlers/handler_api_chirps.js";
 import { handlerGetChirp } from "./handlers/handler_api_chirps.js";
 import { handlerLogin } from "./handlers/handler_api_login.js";
@@ -54,9 +54,25 @@ app.get("/api/chirps/:chirpID", async (req, res, next) => {
         next(err);
     }
 });
+app.delete("/api/chirps/:chirpID", async (req, res, next) => {
+    try {
+        await handlerDeleteChirp(req, res, next);
+    }
+    catch (err) {
+        next(err);
+    }
+});
 app.post("/api/users", async (req, res, next) => {
     try {
         await handlerCreateUser(req, res, next);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+app.put("/api/users", async (req, res, next) => {
+    try {
+        await handlerUpdateUserPasswordAndEmail(req, res, next);
     }
     catch (err) {
         next(err);

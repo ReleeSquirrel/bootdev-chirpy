@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { config } from "../config.js";
-import { BadRequestError } from "../errors.js";
+import { BadRequestError, ForbiddenError, NotFoundError } from "../errors.js";
 import { getBearerToken, validateJWT } from "../lib/auth.js";
-import { createChirp, getAllChirps, getChirpById } from "../lib/db/queries/chirps.js";
+import { createChirp, deleteChirpById, getAllChirps, getChirpById } from "../lib/db/queries/chirps.js";
 import { NewChirp } from "../lib/db/schema.js";
 
 export async function handlerCreateChirp(req: Request, res: Response, next: NextFunction) {
@@ -63,3 +63,18 @@ export async function handlerGetAllChirps(req: Request, res: Response, next: Nex
     return;
 }
 
+export async function handlerDeleteChirp(req: Request, res: Response, next: NextFunction) {
+    // Check Access Token JWT
+    const userID = await validateJWT(getBearerToken(req), config.apiConfig.jwtSecret);
+
+    // Check if the chirp exists and belongs to userID
+    const chirp: NewChirp = await getChirpById(req.params.chirpID);
+    if (!chirp) throw new NotFoundError(`Chirp not found.`);
+    if (chirp.userId != userID) throw new ForbiddenError(`Chirp is not owned by user.`);
+
+    // Delete the Chirp
+    await deleteChirpById(req.params.chirpID);
+
+    // Respond with success
+    res.status(204).send();
+}
