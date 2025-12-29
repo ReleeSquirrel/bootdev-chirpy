@@ -16,14 +16,18 @@ export async function handlerPolkaUserUpgraded(req: Request, res: Response, next
     const apiKey = getAPIKey(req);
     if (apiKey !== config.apiConfig.polkaAPIKey) throw new UnauthorizedError(`Unauthorized Webhook Access`);
 
-    const input: Input = req.body;
+    const rawInput = req.body;
 
     // Validate Input
-    if(!input ||
-        typeof input.event !== "string" ||
-        typeof input.data !== "object" ||
-        typeof input.data.userId !== "string"
+    if( typeof rawInput !== "object" ||
+        rawInput === null ||
+        typeof (rawInput as any).event !== "string" ||
+        typeof (rawInput as any).data !== "object" ||
+        (rawInput as any) === null ||
+        typeof (rawInput as any).data.userId !== "string"
     ) throw new BadRequestError(`Input doesn't match expected JSON format.`);
+
+    const input: Input = rawInput;
 
     if(input.event !== "user.upgraded") {
         res.status(204).send();

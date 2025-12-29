@@ -20,7 +20,6 @@ export async function handlerRevoke(req: Request, res: Response, next: NextFunct
     // Revoke the Refresh Token in the database
     await setRefreshTokenRevoked(refreshTokenMatch.token);
 
-    // Respond with a new JWT Access Token
     res.status(204).send();
     return;
 }

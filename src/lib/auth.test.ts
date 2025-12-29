@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import { checkPasswordHash, hashPassword, makeJWT, validateJWT } from "./auth.js";
-import { BadRequestError } from "../errors";
-import { config } from "../config.js";
+import { UnauthorizedError } from "../errors";
 
 describe("Password Hashing", () => {
   const password1 = "correctPassword123!";
@@ -39,10 +38,10 @@ describe("JWT Creation and Validation", () => {
     });
 
     it("should return an error because the JWT is expired", async () => {
-        await expect(async () => await validateJWT(jwt2, testSecret)).rejects.toThrow(BadRequestError);
+        await expect(async () => await validateJWT(jwt2, testSecret)).rejects.toThrow(UnauthorizedError);
     });
 
     it("should return an error because it was signed with the wrong secret", async () => {
-        await expect(async () => await validateJWT(jwt3, testSecret)).rejects.toThrow(BadRequestError);
+        await expect(async () => await validateJWT(jwt3, testSecret)).rejects.toThrow(UnauthorizedError);
     });
 });
